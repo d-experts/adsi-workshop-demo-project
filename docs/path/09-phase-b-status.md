@@ -91,7 +91,7 @@ npm run dev
 
 | 名前 | メール | パスワード | ロール |
 | ---- | ------ | --------- | ------ |
-| 仲吉 朝洋 | nakayoshi-tomohiro@d-experts.com | demo1234 | ADMIN + 上長 |
+| 佐藤 管理 | admin@example.com | demo1234 | ADMIN + 上長 |
 | 田中 太郎 | tanaka@example.com | password123 | 一般社員 |
 | 鈴木 花子 | suzuki@example.com | password123 | 営業部上長 |
 | 山田 一郎 | yamada@example.com | password123 | 一般社員 |

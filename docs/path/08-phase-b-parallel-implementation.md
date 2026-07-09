@@ -44,7 +44,7 @@ Phase A で定義済みのインターフェース（Entity, Service interface, 
 
 | 名前 | メール | パスワード | ロール | 部署 | 上長 |
 |------|--------|-----------|--------|------|------|
-| 仲吉 朝洋 | nakayoshi-tomohiro@d-experts.com | demo1234 | ADMIN | 開発部 | Yes |
+| 佐藤 管理 | admin@example.com | demo1234 | ADMIN | 開発部 | Yes |
 | 田中 太郎 | tanaka@example.com | password123 | EMPLOYEE | 開発部 | No |
 | 鈴木 花子 | suzuki@example.com | password123 | EMPLOYEE | 営業部 | Yes |
 | 山田 一郎 | yamada@example.com | password123 | EMPLOYEE | 営業部 | No |
