@@ -21,10 +21,16 @@ export function DepartmentFilter({ value, onChange }: DepartmentFilterProps) {
     onChange(newValue ?? "all");
   };
 
+  const displayLabel = value === "all"
+    ? "全部署"
+    : departments.find((d) => d.id === value)?.name;
+
   return (
     <Select value={value} onValueChange={handleChange}>
       <SelectTrigger>
-        <SelectValue placeholder="全部署" />
+        <SelectValue placeholder="全部署">
+          {displayLabel}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="all">全部署</SelectItem>

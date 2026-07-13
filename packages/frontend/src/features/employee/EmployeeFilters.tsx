@@ -36,7 +36,9 @@ export function EmployeeFilters({
         onValueChange={(value) => onDepartmentIdChange(value ?? "")}
       >
         <SelectTrigger>
-          <SelectValue placeholder="部署で絞り込み" />
+          <SelectValue placeholder="部署で絞り込み">
+            {departments.find((d) => d.id === departmentId)?.name}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           {departments.map((dept) => (
