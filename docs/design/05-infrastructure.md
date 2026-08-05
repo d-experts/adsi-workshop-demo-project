@@ -51,9 +51,8 @@ spring:
 ### 起動方法
 
 ```bash
-npm run boot:workshop
-# または
-./gradlew bootRun --args='--spring.profiles.active=workshop'
+npm run dev            # backend + frontend
+npm run dev:backend    # backend のみ
 ```
 
 ### 特徴

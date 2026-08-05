@@ -18,9 +18,7 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         var configuration = new CorsConfiguration();
-        // allowCredentials(true) と併用するため、パターン指定を使う。
-        // "*" はドットを含めてマッチするので localhost の完全一致に加え、
-        // SageMaker Studio ドメイン（https://*.sagemaker.aws）も許可できる。
+        // allowCredentials(true) との併用のためパターン指定を使う。
         configuration.setAllowedOriginPatterns(allowedOrigins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));

@@ -19,7 +19,6 @@ model: sonnet
 
 ### CRITICAL
 - `any` 型の使用
-- `fetch("/api/...")` で basePath 未適用（SageMaker 経路を通らない）
 - `dangerouslySetInnerHTML` 未サニタイズ
 
 ### HIGH

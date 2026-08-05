@@ -14,14 +14,10 @@
 │   ├── common/         # 開発プロセス・共通規約
 │   ├── java-spring-boot.md
 │   ├── typescript-frontend.md
-│   ├── sagemaker-preview.md
-│   ├── sagemaker-deploy.md
 │   ├── security.md
 │   └── testing.md
 └── skills/
     ├── dev-environment/        # 起動・アクセス
-    ├── sagemaker-code-editor/  # SageMaker プレビュー設定
-    ├── sagemaker-aws-deploy/   # SageMaker からの AWS デプロイ
     ├── requirements/           # 要求仕様（Inception）
     ├── design/                 # 設計（Construction 入口）
     ├── work-decomposition/     # UoW/domain 分割
@@ -35,7 +31,7 @@
 | レイヤー | 役割 | 例 |
 |---------|------|-----|
 | `CLAUDE.md` | 入口（最小） | パッケージ構成、スキルへのリンク |
-| `rules/` | 何を守るか | TDD、SB4 互換、SageMaker 制約 |
+| `rules/` | 何を守るか | TDD、SB4 互換、セキュリティ |
 | `skills/` | どう進めるか | 要求 / 設計 / 分割 / TDD / レビュー手順 |
 | `agents/` | subagent の専門性 | java-reviewer 等 |
 
@@ -52,7 +48,6 @@
 4. **TDD 実装** — `skills/tdd-implementation/SKILL.md`（Plan → 承認 → TDD）
 5. **検証** — `skills/verify/SKILL.md`
 6. **レビュー** — `skills/multi-agent-review/SKILL.md`（subagent デモ）
-7. **SageMaker 確認** — `skills/sagemaker-code-editor/SKILL.md`
 
 > 「要求 → 設計 → (分割) → 実装」は**ズームレベルで再帰する**。
 > プロダクト全体 / 大機能では全工程を、各 Unit では軽量な要求・設計 + 実装を回す。
@@ -70,8 +65,10 @@
 
 `multi-agent-review` スキルが変更内容に応じて並列起動する。
 
-## SageMaker プレビュー
+## 起動
 
-1. `npm run dev:sagemaker`
-2. PORTS タブの地球儀 → URL の `ports` を `absports` に置換
-3. 詳細: `skills/sagemaker-code-editor/SKILL.md`
+```bash
+npm run dev    # backend(:8080) + frontend(:3000)
+```
+
+詳細: `skills/dev-environment/SKILL.md`

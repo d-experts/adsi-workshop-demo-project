@@ -45,4 +45,3 @@ pnpm-lock.yaml
 .claude/settings.local.json
 
 ### Runtime ###
-.sagemaker.pids
