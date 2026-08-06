@@ -34,7 +34,7 @@ volumes:
 
 ## ワークショップ環境（Docker 不要）
 
-SageMaker Studio 等 Docker が使えない環境向けに、H2 インメモリ DB で動作する `workshop` プロファイルを用意。
+Docker が使えない環境向けに、H2 インメモリ DB で動作する `workshop` プロファイルを用意。
 
 ```yaml
 # application-workshop.yaml

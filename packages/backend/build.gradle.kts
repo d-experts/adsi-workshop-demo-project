@@ -67,12 +67,12 @@ dependencies {
 }
 
 // --- bootRun ---
-// ヘッドレス環境（SageMaker 等）では /etc/fonts/fonts.conf が欠落しており、AWT の
+// ヘッドレスなコンテナ環境では /etc/fonts/fonts.conf が欠落しており、AWT の
 // フォント初期化が「Fontconfig head is null」で失敗する。JasperReports の PDF 生成が
 // この初期化を通るため、以下の 2 つを明示指定して回避する:
 //   1. sun.awt.fontconfig    — 最小の fontconfig.properties を指定し head is null を回避
 //   2. sun.java2d.fontpath   — 実体フォント（.ttf）のディレクトリを追加登録し
-//                              「No physical fonts found」を回避（SageMaker では /opt/conda/fonts）
+//                              「No physical fonts found」を回避
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
 	jvmArgs(
 		"-Djava.awt.headless=true",

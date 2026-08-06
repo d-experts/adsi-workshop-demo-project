@@ -8,9 +8,7 @@
 
 | やりたいこと | 参照先 |
 |-------------|--------|
-| 起動（ローカル / SageMaker） | `.claude/skills/dev-environment/SKILL.md` |
-| SageMaker プレビュー設定 | `.claude/skills/sagemaker-code-editor/SKILL.md` |
-| SageMaker から AWS デプロイ | `.claude/skills/sagemaker-aws-deploy/SKILL.md` |
+| 起動（ローカル開発） | `.claude/skills/dev-environment/SKILL.md` |
 | コーディング規約 | `.claude/rules/` |
 | 開発の全体像（SDD / 仕様駆動開発） | `.claude/rules/common/development-process.md` |
 | Issue 運用（要求/設計の永続化） | `.claude/rules/common/issue-workflow.md` |
@@ -22,14 +20,13 @@
 
 > **スキルの起動方針（ワークショップ）**: SDD 工程スキル（`requirements` / `design` / `work-decomposition` / `tdd-implementation`）は **明示的に指定されたときのみ** 使用し、**自動では起動しない**。前半は参加者が自分でプロンプトを入力して各工程を体験し、後半で必要に応じてスキル名を指定して呼び出す。
 
-### SageMaker クイックリファレンス
+### 起動クイックリファレンス
 
 ```bash
-npm run dev:sagemaker        # 起動
-npm run dev:sagemaker:stop   # 停止
+npm run db:up          # PostgreSQL 起動（H2 で動かすなら不要）
+npm run boot           # Backend :8080（H2 で動かすなら boot:workshop）
+npm run dev            # Frontend dev server :3000（ホットリロード）
 ```
-
-アクセス: PORTS タブの地球儀 → URL の `ports` を `absports` に置換（例: `.../absports/3000/`）
 
 ## パッケージ構成
 

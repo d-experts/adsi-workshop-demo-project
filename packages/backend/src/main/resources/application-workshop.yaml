@@ -22,10 +22,7 @@ spring:
 
 app:
   cors:
-    # SageMaker Studio Code Editor のプレビュー（https://<studio-domain>）からも
-    # アクセスするため、Studio ドメインのパターンを許可する。CorsConfig 側は
-    # allowedOriginPatterns を使うので "*" でサブドメインを吸収できる。
-    allowed-origins: http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003,https://*.studio.*.sagemaker.aws
+    allowed-origins: http://localhost:3000
 
 logging:
   level:
