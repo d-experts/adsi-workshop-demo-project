@@ -5,8 +5,6 @@
     "boot": "cd packages/backend && ./gradlew bootRun",
     "boot:workshop": "cd packages/backend && ./gradlew bootRun --args='--spring.profiles.active=workshop'",
     "dev": "cd packages/frontend && npm run dev",
-    "dev:sagemaker": "bash scripts/dev-sagemaker.sh",
-    "dev:sagemaker:stop": "bash scripts/dev-sagemaker.sh stop",
     "build:backend": "cd packages/backend && ./gradlew bootJar",
     "build:frontend": "cd packages/frontend && npm run build",
     "check:backend": "cd packages/backend && ./gradlew check",

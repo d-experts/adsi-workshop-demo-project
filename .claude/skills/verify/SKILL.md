@@ -19,15 +19,6 @@ npm run lint:frontend
 - [ ] 新機能にテストあり（カバレッジ 80% 目標）
 - [ ] 未回答の `[Answer]` が残っていない
 
-## SageMaker 起動後
-
-```bash
-curl -s -o /dev/null -w "status=%{http_code} location=%{redirect_url}\n" \
-  http://localhost:3000/absports/3000/
-```
-
-307 で Location に `/codeeditor/default/absports/3000/` が含まれること。
-
 ## 失敗時
 
 1. エラーメッセージを確認

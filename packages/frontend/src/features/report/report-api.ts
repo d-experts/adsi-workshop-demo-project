@@ -1,4 +1,4 @@
-import { apiClient, withBasePath } from "@/lib/api-client";
+import { apiClient } from "@/lib/api-client";
 
 export interface MonthlyRecordResponse {
   employeeId: string;
@@ -45,7 +45,7 @@ async function downloadFile(url: string, filename: string): Promise<void> {
     headers["X-XSRF-TOKEN"] = csrf;
   }
 
-  const response = await fetch(withBasePath(url), {
+  const response = await fetch(url, {
     credentials: "include",
     headers,
   });

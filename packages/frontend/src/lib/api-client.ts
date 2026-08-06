@@ -5,16 +5,6 @@ interface ApiError {
   errors?: Record<string, string>;
 }
 
-// SageMaker のプロキシ配下（basePath あり）では、ブラウザの fetch / 遷移先は
-// basePath を自動付与しない。絶対パス（先頭 "/"）に basePath を前置して、
-// 必ずプロキシ経路（/codeeditor/default/absports/<port>/...）を通す。
-// 本番（static export）では NEXT_PUBLIC_BASE_PATH が空なので無影響。
-const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-
-export function withBasePath(path: string): string {
-  return path.startsWith("/") ? `${BASE_PATH}${path}` : path;
-}
-
 export class ApiClientError extends Error {
   constructor(
     public readonly status: number,
@@ -36,7 +26,7 @@ function getCsrfToken(): string | undefined {
 async function handleResponse<T>(response: Response): Promise<T> {
   if (response.status === 401) {
     if (typeof window !== "undefined" && !window.location.pathname.endsWith("/login")) {
-      window.location.href = withBasePath("/login");
+      window.location.href = "/login";
     }
     throw new ApiClientError(401, "Unauthorized", "認証が必要です");
   }
@@ -64,14 +54,14 @@ function mutationHeaders(): Record<string, string> {
 
 export const apiClient = {
   get<T>(path: string): Promise<T> {
-    return fetch(withBasePath(path), {
+    return fetch(path, {
       credentials: "include",
       headers: { Accept: "application/json" },
     }).then(handleResponse<T>);
   },
 
   post<T>(path: string, body?: unknown): Promise<T> {
-    return fetch(withBasePath(path), {
+    return fetch(path, {
       method: "POST",
       credentials: "include",
       headers: mutationHeaders(),
@@ -80,7 +70,7 @@ export const apiClient = {
   },
 
   put<T>(path: string, body: unknown): Promise<T> {
-    return fetch(withBasePath(path), {
+    return fetch(path, {
       method: "PUT",
       credentials: "include",
       headers: mutationHeaders(),
@@ -89,7 +79,7 @@ export const apiClient = {
   },
 
   patch<T>(path: string, body?: unknown): Promise<T> {
-    return fetch(withBasePath(path), {
+    return fetch(path, {
       method: "PATCH",
       credentials: "include",
       headers: mutationHeaders(),
@@ -103,7 +93,7 @@ export const apiClient = {
     if (csrf) {
       headers["X-XSRF-TOKEN"] = csrf;
     }
-    return fetch(withBasePath(path), {
+    return fetch(path, {
       method: "DELETE",
       credentials: "include",
       headers,
