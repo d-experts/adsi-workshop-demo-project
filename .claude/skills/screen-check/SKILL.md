@@ -27,9 +27,11 @@ Issue 対応なら、Issue ファイルの「検証」欄に画像へのリン�
 ### 1. 準備
 
 ```bash
-playwright-cli --version || npm install -g @playwright/cli@latest
+playwright-cli --version   # 通常はインストール済み
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:3000/login   # 200 なら起動済み
 ```
+
+- `playwright-cli` はワークショップ環境にインストール済み。見つからないときだけ `npm install -g @playwright/cli@latest` を実行し、それでもコマンドが見つからなければ `mise reshim` を実行する
 
 アプリが起動していなければ、ユーザーに起動を依頼するか、バックグラウンドで起動して待つ。
 
@@ -40,7 +42,7 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:3000/login   # 200 な
 ### 3. ブラウザを開いてログイン
 
 ```bash
-playwright-cli open http://localhost:3000/login --browser=msedge --headed
+playwright-cli open http://localhost:3000/login --headed
 playwright-cli snapshot
 playwright-cli fill <メール欄の ref> "admin@example.com"
 playwright-cli fill <パスワード欄の ref> "demo1234"
@@ -49,8 +51,8 @@ playwright-cli snapshot
 ```
 
 - `<ref>` は `snapshot` の出力にある `e15` のような要素 ID
-- ワークショップの Windows 環境には Edge が入っているので `--browser=msedge` を指定する（Chrome がなくても動く）
-- `--headed` を付けると参加者もブラウザの動きを見られる
+- ブラウザは既定の Google Chrome を使う（`--browser` は指定しない）
+- `--headed` を必ず付ける。参加者がデスクトップ上でブラウザの動きを見られる
 
 ### 4. 操作して証跡を残す
 
@@ -73,11 +75,13 @@ playwright-cli screenshot --filename=issues/assets/0003-01-clock-in.png
 - ファイル名は英小文字・数字・ハイフンのみ（日本語や空白を使わない）
 - 画面全体が必要なら `--full-page` を付ける
 
-### 5. 後片付け
+### 5. 後片付け（必須）
 
 ```bash
 playwright-cli close
 ```
+
+`playwright-cli open` はバックグラウンドでブラウザを動かし続ける。確認の途中で NG が出て中断した場合も含め、**最後に必ず `playwright-cli close` を実行する**。
 
 ## Issue への記録
 
