@@ -10,7 +10,8 @@ description: 複数タイプの subagent に並列レビューさせるコード
 ## いつ使う
 
 - コード変更後
-- コミット / PR 前
+- コミット前
+- Issue の AI レビュー時（ステータス「レビュー待ち」。手順は `.claude/rules/common/issue-workflow.md`）
 - 「レビューして」と依頼されたとき
 
 ## Subagent モデル

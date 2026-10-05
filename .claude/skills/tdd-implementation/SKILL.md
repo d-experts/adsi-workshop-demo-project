@@ -11,12 +11,12 @@ SDD（仕様駆動開発）の実装工程（参照モデル AI-DLC の「コー
 ## いつ使う
 
 - 設計が確定した後の実装
-- `docs/units/unit_*.md` に沿った実装
+- `docs/units/unit_*.md` や `docs/feature-N/qa.md` の確定仕様に沿った実装
 - 「Plan を出してから実装して」と依頼されたとき
 
 ## 前提確認
 
-1. 対象の `docs/units/unit_*.md`（または設計）を読む
+1. 対象の `docs/units/unit_*.md`、機能追加なら `docs/feature-N/qa.md`（と `design.md`）、または設計を読む
 2. 依存 Unit が完了しているか確認する
 3. 未回答の `[Answer]` がないか確認する（あれば `requirements` スキルへ戻る）
 

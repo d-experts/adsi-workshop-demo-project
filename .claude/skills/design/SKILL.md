@@ -20,6 +20,7 @@ SDD（仕様駆動開発）の設計工程（参照モデル AI-DLC の Construc
 | レベル | 設計の粒度 | 出力先 |
 |--------|-----------|--------|
 | プロダクト / 大機能 | 全ドメイン・全 API の設計一式 | `docs/design/` |
+| 機能追加 | その機能で増える・変わる Entity / API / DB / 画面 | `docs/feature-N/design.md`（全体設計に影響する分は `docs/design/` にも反映） |
 | 各 Unit | そのドメインの Entity / API のみ | `docs/units/unit_*.md` 内 |
 | 小修正 | ほぼスキップ | — |
 
@@ -44,11 +45,11 @@ SDD（仕様駆動開発）の設計工程（参照モデル AI-DLC の Construc
 
 ## 手順
 
-1. `docs/requirements/` を読む
+1. `docs/requirements/`（機能追加なら `docs/feature-N/qa.md` の確定仕様）を読む
 2. ドメインモデリング（Entity / VO / Repository / Service）
 3. API を OpenAPI で定義する
 4. DB を Flyway マイグレーション前提で設計する
-5. `docs/working/design/` で検討し、確定版を `docs/design/` に整理する
+5. 設計判断の Q&A は `docs/feature-N/qa.md` に追記して詰め、確定版を `docs/feature-N/design.md`（プロダクト全体なら `docs/design/`）に整理する
 
 ## 完了条件
 

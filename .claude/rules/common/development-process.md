@@ -58,24 +58,30 @@ AWS の **AI-DLC（AI-Driven Development Life Cycle）** を参照モデルと�
 
 ## Issue を起点・記録ハブにする
 
-各機能・バグは **GitHub Issue** から始め、工程ごとの成果物（要求仕様・設計・実装計画）を
-**Issue にコメントして永続化**する。確定版は `docs/` に置き、Issue から参照する。
-詳細は [issue-workflow.md](./issue-workflow.md)、テンプレは `.github/ISSUE_TEMPLATE/`。
+各機能・バグは **`issues/` フォルダの Issue ファイル（ローカル Markdown）** から始める。GitHub は使わない。
+調査結果・変更内容・レビュー結果、工程ごとの決定事項の要約は **Issue ファイルに追記**する。確定版は `docs/` に置き、Issue から参照する。
+PR の代わりに AI レビュー（新しいセッションの Claude が Issue と差分を読んでレビュー）を行う。
+詳細は [issue-workflow.md](./issue-workflow.md)、テンプレは `issues/TEMPLATE-bug.md` / `issues/TEMPLATE-feature.md`。
 
 ## 1. 要件定義（Inception）
 
 - ユーザーとの対話で機能要件を決める
 - ユーザーストーリーとして記述する
-- 確定した要件は `docs/requirements/` に記録する
+- 確定した要件は、機能単位なら `docs/feature-N/qa.md`、プロダクト全体なら `docs/requirements/` に記録する
 
-### 作業ドキュメント（`docs/working/`）
+### 機能ごとの作業フォルダ（`docs/feature-N/`）
 
-要件定義や設計の過程で使う作業用ドキュメントは `docs/working/` 以下に配置する:
+機能追加の要件・設計の検討は、**機能ごとのフォルダ `docs/feature-N/`** で行う（複数の機能を並行して進められるようにするため）。
 
-- `docs/working/requirements/` — 要件定義の Q&A ドキュメント
-- `docs/working/design/` — 設計検討の作業ドキュメント
+```
+docs/feature-1/
+├── qa.md       # 必須。[Question]/[Answer] と、回答が揃った後の「確定仕様」
+└── design.md   # 任意。design スキルで機能単位の設計をするときだけ
+```
 
-作業ドキュメントでは `[Question]` / `[Answer]` タグを使い、ユーザーが `[Answer]` を埋めながら仕様を決めていく:
+- **N**: 既存の `docs/feature-*/` の最大番号 + 1（なければ 1）。ゼロ埋めしない
+- **Issue との対応**: N と Issue 番号は別の連番。`qa.md` 冒頭に `- Issue: #5（issues/0005-xxx.md）` と書き、Issue ファイルの `## 仕様` に `docs/feature-N/qa.md` へのリンクを書く（Issue がなければ Issue 行は省略）
+- `qa.md` では `[Question]` / `[Answer]` タグを使い、ユーザーが `[Answer]` を埋めながら仕様を決めていく:
 
 ```
 [Question] 社員IDは自動採番ですか？それとも手動入力？
@@ -83,11 +89,14 @@ AWS の **AI-DLC（AI-Driven Development Life Cycle）** を参照モデルと�
 ```
 
 - AI は未回答の `[Answer]` がある状態で、その仕様に依存する実装や設計に進んではいけない
-- 全ての `[Answer]` が埋まったら、確定した仕様を `docs/requirements/` や `docs/design/` に整理する
+- 全ての `[Answer]` が埋まったら、`qa.md` 末尾に `## 確定仕様`（ユーザーストーリー・受け入れ条件）をまとめる。実装は `docs/feature-N/qa.md` の仕様をもとに行う
+- プロダクト全体の確定版（`docs/requirements/`・`docs/design/`・`docs/units/`）に影響する決定は、そちらにも反映する
+
+> `docs/working/` は、このアプリを最初に作ったときの要件・設計 Q&A の記録（参照専用）。新しい作業ファイルは置かない。
 
 ## 2. 基本設計（AI と壁打ち）
 
-以下のドキュメントを AI との対話で作成し、`docs/design/` に配置する:
+以下のドキュメントを AI との対話で作成し、`docs/design/` に配置する（機能単位の設計メモは `docs/feature-N/design.md`）:
 
 - **ドメイン分析**: Entity, Value Object, 関連図（ライト DDD）
 - **API 設計**: OpenAPI (YAML) で定義。Swagger UI で確認可能な形式

@@ -11,7 +11,7 @@
 | 起動（ローカル開発） | `.claude/skills/dev-environment/SKILL.md` |
 | コーディング規約 | `.claude/rules/` |
 | 開発の全体像（SDD / 仕様駆動開発） | `.claude/rules/common/development-process.md` |
-| Issue 運用（要求/設計の永続化） | `.claude/rules/common/issue-workflow.md` |
+| Issue 運用（`issues/` のローカル Markdown。GitHub は使わない） | `.claude/rules/common/issue-workflow.md` |
 | 要求仕様 | `.claude/skills/requirements/SKILL.md` |
 | 設計 | `.claude/skills/design/SKILL.md` |
 | 作業分割（UoW） | `.claude/skills/work-decomposition/SKILL.md` |
@@ -34,7 +34,9 @@ npm run dev            # Frontend dev server :3000（ホットリロード）
 - `packages/frontend/` — Next.js (TypeScript)
 - `packages/infra/` — AWS CDK (TypeScript)。dev/prod
 - `docs/path/` — デモの過程ドキュメント
-- `docs/working/` — 要件・設計の Q&A 作業ドキュメント
+- `docs/feature-N/` — 機能追加ごとの作業フォルダ（`qa.md` に [Question]/[Answer] と確定仕様）
+- `docs/working/` — アプリ初期構築時の要件・設計 Q&A の記録（参照専用）
+- `issues/` — Issue（1 件 1 ファイルの Markdown。テンプレは `issues/TEMPLATE-bug.md` / `TEMPLATE-feature.md`）
 
 ## セットアップ
 
@@ -46,3 +48,9 @@ npm run setup
 
 デモの過程を `docs/path/` に番号付きファイル（`00-xxx.md`）で記録する。
 新ステップに進んだら新ファイルを作成。プロンプト・やったこと・つまずき・最終構成を含める。
+
+## Issue と Git の運用
+
+Issue は `issues/` フォルダのローカル Markdown で管理する（GitHub Issue / PR / `gh` / `git push` は使わない）。
+作業はローカルの編集と `git commit` で完結し、PR の代わりに Issue ファイルへ変更内容を追記して AI レビューする。
+詳細は `.claude/rules/common/issue-workflow.md`。

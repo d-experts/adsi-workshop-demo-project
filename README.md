@@ -62,6 +62,7 @@ npm run dev
 │   ├── requirements/     # 要件定義
 │   ├── design/           # 設計ドキュメント
 │   └── units/            # Unit of Work 定義
+├── issues/               # Issue（ローカル Markdown。TEMPLATE-*.md がテンプレート）
 └── package.json          # モノレポスクリプト
 ```
 
