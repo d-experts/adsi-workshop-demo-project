@@ -49,6 +49,9 @@
 5. **検証** — `skills/verify/SKILL.md`
 6. **レビュー** — `skills/multi-agent-review/SKILL.md`（subagent デモ）
 
+Issue はリポジトリ直下の `issues/` に 1 件 1 ファイルの Markdown で管理する（GitHub は使わない）。
+起票 → 調査 → 修正 → AI レビューの各段階で Issue ファイルに追記する。手順は `rules/common/issue-workflow.md`。
+
 > 「要求 → 設計 → (分割) → 実装」は**ズームレベルで再帰する**。
 > プロダクト全体 / 大機能では全工程を、各 Unit では軽量な要求・設計 + 実装を回す。
 

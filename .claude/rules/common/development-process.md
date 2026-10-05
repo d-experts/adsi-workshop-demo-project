@@ -58,9 +58,10 @@ AWS の **AI-DLC（AI-Driven Development Life Cycle）** を参照モデルと�
 
 ## Issue を起点・記録ハブにする
 
-各機能・バグは **GitHub Issue** から始め、工程ごとの成果物（要求仕様・設計・実装計画）を
-**Issue にコメントして永続化**する。確定版は `docs/` に置き、Issue から参照する。
-詳細は [issue-workflow.md](./issue-workflow.md)、テンプレは `.github/ISSUE_TEMPLATE/`。
+各機能・バグは **`issues/` フォルダの Issue ファイル（ローカル Markdown）** から始める。GitHub は使わない。
+調査結果・変更内容・レビュー結果、工程ごとの決定事項の要約は **Issue ファイルに追記**する。確定版は `docs/` に置き、Issue から参照する。
+PR の代わりに AI レビュー（新しいセッションの Claude が Issue と差分を読んでレビュー）を行う。
+詳細は [issue-workflow.md](./issue-workflow.md)、テンプレは `issues/TEMPLATE.md`。
 
 ## 1. 要件定義（Inception）
 
