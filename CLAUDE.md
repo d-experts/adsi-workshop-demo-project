@@ -34,8 +34,9 @@ npm run dev            # Frontend dev server :3000（ホットリロード）
 - `packages/frontend/` — Next.js (TypeScript)
 - `packages/infra/` — AWS CDK (TypeScript)。dev/prod
 - `docs/path/` — デモの過程ドキュメント
-- `docs/working/` — 要件・設計の Q&A 作業ドキュメント
-- `issues/` — Issue（1 件 1 ファイルの Markdown。テンプレは `issues/TEMPLATE.md`）
+- `docs/feature-N/` — 機能追加ごとの作業フォルダ（`qa.md` に [Question]/[Answer] と確定仕様）
+- `docs/working/` — アプリ初期構築時の要件・設計 Q&A の記録（参照専用）
+- `issues/` — Issue（1 件 1 ファイルの Markdown。テンプレは `issues/TEMPLATE-bug.md` / `TEMPLATE-feature.md`）
 
 ## セットアップ
 
