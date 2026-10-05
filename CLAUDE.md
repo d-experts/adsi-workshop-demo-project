@@ -17,6 +17,8 @@
 | 作業分割（UoW） | `.claude/skills/work-decomposition/SKILL.md` |
 | TDD 実装 | `.claude/skills/tdd-implementation/SKILL.md` |
 | コードレビュー | `.claude/skills/multi-agent-review/SKILL.md` |
+| 図解レポート（HTML） | `.claude/skills/visual-report/SKILL.md` |
+| 画面確認（スクショ証跡） | `.claude/skills/screen-check/SKILL.md` |
 
 > **スキルの起動方針（ワークショップ）**: SDD 工程スキル（`requirements` / `design` / `work-decomposition` / `tdd-implementation`）は **明示的に指定されたときのみ** 使用し、**自動では起動しない**。前半は参加者が自分でプロンプトを入力して各工程を体験し、後半で必要に応じてスキル名を指定して呼び出す。
 

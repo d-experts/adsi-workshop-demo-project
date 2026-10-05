@@ -23,7 +23,9 @@
     ├── work-decomposition/     # UoW/domain 分割
     ├── tdd-implementation/     # Plan → 承認 → TDD 実装
     ├── multi-agent-review/     # 並列 subagent レビュー
-    └── verify/                 # 検証コマンド
+    ├── verify/                 # 検証コマンド
+    ├── visual-report/          # mermaid 図入り HTML レポート
+    └── screen-check/           # playwright-cli で画面確認 + スクショ証跡
 ```
 
 ## レイヤー
@@ -51,6 +53,15 @@
 
 > 「要求 → 設計 → (分割) → 実装」は**ズームレベルで再帰する**。
 > プロダクト全体 / 大機能では全工程を、各 Unit では軽量な要求・設計 + 実装を回す。
+
+## 補助スキル
+
+工程に関係なく、必要なときに使う。
+
+| スキル | 用途 | 出力 |
+|--------|------|------|
+| `visual-report` | 全体構成・変更内容・処理フローを図解した HTML レポート | `reports/<日時>-<slug>.html`（コミットしない） |
+| `screen-check` | 起動中のアプリをブラウザ操作して画面を確認 | `issues/assets/` のスクショ（Issue なしなら `reports/screenshots/`） |
 
 ## Agents（subagent）
 
