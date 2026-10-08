@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>【差し替え】結論を一文で — 全体構成レポート</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230f1a26'/%3E%3Cpath d='M14 20h16v12H14zM34 32h16v12H34zM22 32v10h12' fill='none' stroke='%23ffb547' stroke-width='4'/%3E%3C/svg%3E">
+<!--
+  visual-report テンプレート（.claude/skills/visual-report/template.html）
+  - style 要素と末尾の module script はそのままコピーする（色・余白・図の挙動はここで決まる）
+  - body の中身だけを差し替える。使わない部品は消してよい
+  - 差し替えマーカー（全角カッコ付きの「差し替え」）が付いた箇所はすべて実際の内容に置き換える
+-->
+<style>
+  /* ---- トークン（ライト既定。ダークは下で上書き）。mermaid に渡す色は必ず #hex で書く ---- */
+  :root {
+    color-scheme: light;
+    --bg: #f2f6fa; --surface: #ffffff; --surface-2: #e8eef5; --border: #d6e0ea; --border-bright: #818f9e;
+    --text: #0f1a26; --text-dim: #4d6074; --accent: #a34700; --accent-soft: #f6e6d8;
+    --ok: #1c7443; --ok-soft: #e1efe6; --warn: #776300; --warn-soft: #f1ecd6; --risk: #b0341e; --risk-soft: #f8e4e0; --info: #145f99;
+    --grid: #e3eaf2; --lift: rgb(15 26 38 / .08);
+    --font-body: "Segoe UI", "Yu Gothic UI", "Meiryo UI", Meiryo, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    --font-mono: Consolas, "Cascadia Mono", Menlo, "BIZ UDGothic", "Yu Gothic UI", monospace;
+    --t-label: .75rem; --t-small: .875rem; --t-body: 1rem; --t-lead: 1.2rem; --t-h2: 1.5rem; --t-h1: clamp(1.8rem, 3.6vw, 2.6rem);
+    --s-1: .25rem; --s-2: .5rem; --s-3: .75rem; --s-4: 1rem; --s-5: 1.5rem; --s-6: 2rem; --s-7: 3rem; --s-8: 4.5rem;
+    --r-1: 4px; --r-2: 8px;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0d1520; --surface: #132031; --surface-2: #1a2a40; --border: #22324a; --border-bright: #596b87;
+    --text: #e3ecf5; --text-dim: #92a6bb; --accent: #ffb547; --accent-soft: #3d3a33;
+    --ok: #6fd3a0; --ok-soft: #1f3d3d; --warn: #e8d36a; --warn-soft: #36392f; --risk: #ff7b6b; --risk-soft: #3d2c35; --info: #7cc0f0;
+    --grid: #172537; --lift: rgb(0 0 0 / .35);
+  }
+
+  /* ---- 基本 ---- */
+  html { font-size: 16px; scroll-padding-top: 4rem; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text); font: 400 var(--t-body)/1.75 var(--font-body); text-wrap: pretty; font-kerning: normal; -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--accent-soft); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  a { color: var(--info); }
+  code, .mono { font-family: var(--font-mono); font-size: .9em; font-variant-ligatures: none; }
+  main { max-width: 72rem; margin: 0 auto; padding: var(--s-6) var(--s-5) var(--s-8); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-7); }
+  .hero + .kpis { margin-top: calc(var(--s-5) - var(--s-7)); }
+  main > *, section, figure { min-width: 0; }
+
+  /* ---- 上部ナビ（一辺ボーダーなので角丸なし） ---- */
+  .topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .topbar-in { max-width: 72rem; margin: 0 auto; padding: var(--s-2) var(--s-5); display: flex; align-items: center; gap: var(--s-4); }
+  .topbar .brand { font: 600 var(--t-label) var(--font-mono); color: var(--text-dim); white-space: nowrap; }
+  .toc { display: flex; gap: var(--s-1); overflow-x: auto; scrollbar-width: none; flex: 1; min-width: 0; }
+  .toc a { font-size: var(--t-small); color: var(--text-dim); text-decoration: none; white-space: nowrap; padding: var(--s-1) var(--s-3); border-radius: var(--r-1); }
+  .toc a:hover, .toc a.is-active { color: var(--text); background: var(--surface-2); }
+
+  /* ---- ヘッダ ---- */
+  header.hero { display: grid; gap: var(--s-4); }
+  .kicker { display: flex; align-items: center; gap: var(--s-2); font: 600 var(--t-label) var(--font-mono); letter-spacing: .08em; color: var(--accent); }
+  .kicker::before { content: ""; width: 1.5rem; height: 2px; background: currentColor; }
+  h1 { font-size: var(--t-h1); line-height: 1.3; font-weight: 700; letter-spacing: -.01em; text-wrap: balance; max-width: 30em; }
+  h1 .num { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .lead { font-size: var(--t-lead); line-height: 1.7; color: var(--text-dim); max-width: 46em; }
+  .lead b { color: var(--text); font-weight: 600; }
+  .meta { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); }
+
+  /* ---- 数値ストリップ（全周枠 + 角丸。セルは 1px の隙間で区切る） ---- */
+  .kpis { display: flex; flex-wrap: wrap; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-2); overflow: hidden; }
+  .kpi { flex: 1 1 12rem; background: var(--surface); padding: var(--s-4) var(--s-5); display: grid; gap: var(--s-1); align-content: start; min-width: 0; }
+  .kpi .k { font: 600 var(--t-label) var(--font-mono); color: var(--text-dim); }
+  .kpi .v { font-size: 2.4rem; line-height: 1.15; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .kpi .v small { font-size: .45em; font-weight: 500; color: var(--text-dim); margin-left: .15em; letter-spacing: 0; }
+  .kpi .d { font-size: var(--t-small); color: var(--text-dim); overflow-wrap: anywhere; }
+  .kpi.is-key .v { color: var(--accent); }
+  /* 内訳バー: 数字に絵を添える */
+  .meter { display: flex; height: .5rem; gap: 2px; margin-top: var(--s-2); }
+  .meter i { display: block; background: var(--border-bright); }
+  .meter i.hot { background: var(--accent); }
+  .meter i.ok { background: var(--ok); } .meter i.risk { background: var(--risk); }
+
+  /* ---- セクション見出し（上の罫線 + 左にラベル） ---- */
+  .sec-head { display: grid; gap: var(--s-2) var(--s-5); align-items: baseline; border-top: 1px solid var(--border); padding-top: var(--s-4); margin-bottom: var(--s-5); }
+  @media (min-width: 52rem) { .sec-head { grid-template-columns: 11rem minmax(0, 1fr); } }
+  .sec-head .no { font: 600 var(--t-label) var(--font-mono); color: var(--text-dim); letter-spacing: .06em; }
+  h2 { font-size: var(--t-h2); line-height: 1.4; font-weight: 700; text-wrap: balance; }
+  h3 { font-size: var(--t-body); font-weight: 700; margin-bottom: var(--s-2); }
+  .sec-body { display: grid; gap: var(--s-5); }
+  .sec-body > p { max-width: 46em; }
+
+  /* ---- 図（mermaid）: 方眼の台紙 + ツールバー + ズーム/パン ---- */
+  figure { display: grid; gap: var(--s-3); }
+  .diagram { position: relative; background: var(--bg); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px; border: 1px solid var(--border); border-radius: var(--r-2); overflow: hidden; }
+  .diagram .vp { position: relative; overflow: hidden; cursor: grab; touch-action: none; min-height: 6rem; }
+  .diagram .vp.is-drag { cursor: grabbing; }
+  .diagram .vp > svg { display: block; max-width: none !important; transform-origin: 0 0; }
+  .diagram pre.mermaid { margin: 0; padding: var(--s-5); font: var(--t-small)/1.5 var(--font-mono); color: var(--text-dim); white-space: pre; overflow-x: auto; }
+  .tools { position: absolute; top: var(--s-2); right: var(--s-2); z-index: 2; display: flex; gap: var(--s-1); align-items: center; }
+  .btn, .tools button { font: 600 var(--t-small) var(--font-mono); color: var(--text); background: var(--surface); border: 1px solid var(--border-bright); border-radius: var(--r-1); min-width: 2rem; height: 2rem; padding: 0 var(--s-2); cursor: pointer; }
+  .btn:hover, .btn:focus-visible, .tools button:hover, .tools button:focus-visible { border-color: var(--accent); }
+  .tools .pct { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); min-width: 3em; text-align: right; }
+  .diagram:fullscreen { display: flex; flex-direction: column; border-radius: 0; }
+  .diagram:fullscreen .vp { flex: 1; }
+  .diagram .err { margin: var(--s-4); padding: var(--s-3) var(--s-4); background: var(--risk-soft); color: var(--text); border: 1px solid var(--risk); border-radius: var(--r-2); font-size: var(--t-small); }
+  figcaption { font-size: var(--t-small); color: var(--text-dim); max-width: 60em; }
+  figcaption .fig-n { font: 700 var(--t-label) var(--font-mono); color: var(--text); margin-right: var(--s-2); }
+  .hint { font: 500 var(--t-label) var(--font-mono); color: var(--text-dim); }
+  /* 変更前 / 変更後を同じ縮尺で並べる */
+  .pair { display: grid; gap: var(--s-5); grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr)); }
+  /* 凡例 */
+  .legend { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); font-size: var(--t-small); color: var(--text-dim); }
+  .legend span::before { content: ""; display: inline-block; width: .9em; height: .9em; margin-right: .4em; vertical-align: -.1em; border: 2px solid var(--border-bright); background: var(--surface); border-radius: 2px; }
+  .legend .key::before { border-color: var(--accent); background: var(--accent-soft); }
+  .legend .added::before { border-color: var(--ok); background: var(--ok-soft); }
+  .legend .changed::before { border-color: var(--warn); background: var(--warn-soft); }
+  .legend .removed::before { border-color: var(--risk); border-style: dashed; background: var(--risk-soft); }
+
+  /* ---- 表（外枠は全周 + 角丸。行は下罫線のみで角丸なし） ---- */
+  .table-wrap { border: 1px solid var(--border); border-radius: var(--r-2); overflow-x: auto; background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: var(--t-small); }
+  th, td { padding: var(--s-2) var(--s-4); text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: 0; }
+  th { background: var(--surface-2); font: 600 var(--t-label) var(--font-mono); color: var(--text-dim); white-space: nowrap; }
+  td code { overflow-wrap: anywhere; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ---- チップ（状態は形 + 言葉 + 色） ---- */
+  .chip { display: inline-flex; align-items: center; gap: .3em; font: 600 var(--t-label)/1.6 var(--font-mono); padding: 0 .5em; border: 1px solid currentColor; border-radius: var(--r-1); white-space: nowrap; }
+  .chip.ok { color: var(--ok); } .chip.warn { color: var(--warn); } .chip.risk { color: var(--risk); } .chip.info { color: var(--info); } .chip.mute { color: var(--text-dim); }
+  .chip.ok::before { content: "●"; } .chip.warn::before { content: "▲"; } .chip.risk::before { content: "■"; } .chip.info::before { content: "◆"; } .chip.mute::before { content: "○"; }
+
+  /* ---- カード群（全周枠 + 角丸） ---- */
+  .cards { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-4); display: grid; gap: var(--s-2); align-content: start; min-width: 0; }
+  .card h3 { margin: 0; }
+  .card p { font-size: var(--t-small); color: var(--text-dim); }
+  .card .path { font: var(--t-label) var(--font-mono); color: var(--text-dim); overflow-wrap: anywhere; }
+
+  /* ---- ファイルマップ ---- */
+  .files { list-style: none; padding: var(--s-3) var(--s-4); font: var(--t-small)/1.9 var(--font-mono); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); overflow-x: auto; }
+  .files li { display: flex; gap: var(--s-3); align-items: baseline; white-space: nowrap; }
+  .files .p { flex: 1; overflow-wrap: anywhere; white-space: normal; }
+  .files .add { color: var(--ok); } .files .del { color: var(--risk); }
+
+  /* ---- 補足（全周枠 + 角丸。色付きの左線は使わない） ---- */
+  .callout { background: var(--surface); border: 1px solid var(--border-bright); border-radius: var(--r-2); padding: var(--s-4) var(--s-5); display: grid; gap: var(--s-2); max-width: 52em; }
+  .callout > .chip { justify-self: start; }
+  .callout ul { padding-left: 1.2em; }
+  .sources { font-size: var(--t-small); color: var(--text-dim); columns: 2 22rem; column-gap: var(--s-6); padding-left: 1.2em; }
+  .sources code { color: var(--text); }
+  footer { color: var(--text-dim); font-size: var(--t-label); font-family: var(--font-mono); }
+
+  @media print {
+    .topbar, .tools, .hint, .btn { display: none !important; }
+    .diagram, .card, .kpi, .table-wrap { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="topbar-in">
+  <span class="brand">visual-report</span>
+  <!-- 4 セクション以上なら目次を置く。href は各 section の id -->
+  <nav class="toc" aria-label="目次">
+    <a href="#overview">全体像</a>
+    <a href="#layers">レイヤー</a>
+    <a href="#data">データ</a>
+    <a href="#files">関連ファイル</a>
+    <a href="#notes">未確認事項</a>
+  </nav>
+  <button type="button" id="theme-btn" class="btn" title="テーマ切替（自動 / ライト / ダーク）">テーマ: 自動</button>
+</div></div>
+
+<main>
+  <!-- ヘッダ: キッカー → 結論の h1 → リード 1〜2 文 → メタ情報 -->
+  <header class="hero">
+    <div class="kicker">全体構成レポート</div>
+    <h1>【差し替え】<span class="num">3</span> つのパッケージで動く勤怠アプリ。画面 → API → DB の一本道</h1>
+    <p class="lead">【差し替え】結論を 1〜2 文で。<b>読み手が最初に知るべき一点</b>だけを太字にする。</p>
+    <div class="meta"><span>対象: リポジトリ全体</span><span>ブランチ: main @ abc1234</span><span>生成: 2026-10-09 10:00</span></div>
+  </header>
+
+  <!-- 数値ストリップ: 3〜5 個。数字はコードで数えたものだけ。根拠を .d に書く -->
+  <div class="kpis">
+    <div class="kpi is-key"><span class="k">API</span><span class="v">24<small>本</small></span><span class="d"><code>*Controller.java</code> 8 クラス</span></div>
+    <div class="kpi"><span class="k">テーブル</span><span class="v">6<small>個</small></span><span class="d">Flyway <code>V1〜V5</code></span></div>
+    <div class="kpi"><span class="k">画面</span><span class="v">10<small>画面</small></span><span class="d"><code>src/app/**/page.tsx</code></span>
+      <!-- 内訳バー（任意）: flex の比率に件数を入れる -->
+      <div class="meter" role="img" aria-label="一般 7 画面、管理 3 画面"><i class="hot" style="flex:7"></i><i style="flex:3"></i></div>
+    </div>
+  </div>
+
+  <!-- 図 1: 最初の画面で答えが見えるように、ヘッダ直後に主役の図を置く -->
+  <section id="overview">
+    <div class="sec-head"><span class="no">01 全体像</span><h2>【差し替え】見出しは結論で書く（例: ブラウザは API だけを呼び、DB に触るのは Backend だけ）</h2></div>
+    <div class="sec-body">
+      <figure>
+        <div class="diagram" aria-label="【差し替え】図の内容を一文で（読み上げ用）">
+<pre class="mermaid">
+flowchart TB
+  user(["利用者<br/>ブラウザ"])
+  subgraph fe["packages/frontend（Next.js）"]
+    direction LR
+    pages["画面<br/>src/app/**/page.tsx"] -->|"呼び出す"| api["API クライアント<br/>src/lib/api-client.ts"]
+  end
+  subgraph be["packages/backend（Spring Boot）"]
+    direction LR
+    ctl["Controller"] -->|"委譲"| svc["Service"] -->|"読み書き"| repo["Repository"]
+  end
+  db[("PostgreSQL / H2")]
+  user -->|"操作"| fe
+  fe -->|"HTTP /api/*"| be
+  be -->|"SQL"| db
+  class ctl key
+</pre>
+        </div>
+        <figcaption><span class="fig-n">図 1</span>【差し替え】図の主張を一文で。根拠: <code>packages/…</code></figcaption>
+      </figure>
+      <div class="legend"><span class="key">注目してほしい要素</span><span>その他</span></div>
+    </div>
+  </section>
+
+  <!-- 変更内容レポートでは「変更前 / 変更後」を .pair で並べる（同じノード ID・同じ向きで描く） -->
+  <section id="layers">
+    <div class="sec-head"><span class="no">02 変更前後</span><h2>【差し替え】変更後は Service が承認状態を検証してから保存する</h2></div>
+    <div class="sec-body">
+      <div class="pair">
+        <figure>
+          <div class="diagram" aria-label="変更前の処理">
+<pre class="mermaid">
+flowchart TD
+  ctl["Controller"] --> svc["Service"] --> repo["Repository"]
+  svc --> old["旧チェック"]
+  class old removed
+</pre>
+          </div>
+          <figcaption><span class="fig-n">図 2a</span>変更前。【差し替え】</figcaption>
+        </figure>
+        <figure>
+          <div class="diagram" aria-label="変更後の処理">
+<pre class="mermaid">
+flowchart TD
+  ctl["Controller"] --> svc["Service"] --> repo["Repository"]
+  svc --> chk["状態チェック（新規）"]
+  class chk added
+  class svc changed
+</pre>
+          </div>
+          <figcaption><span class="fig-n">図 2b</span>変更後。【差し替え】</figcaption>
+        </figure>
+      </div>
+      <div class="legend"><span class="added">追加</span><span class="changed">変更</span><span class="removed">削除</span></div>
+      <!-- ファイルマップ（変更内容レポート用）: git diff --numstat の値を書く -->
+      <ul class="files">
+        <li><span class="chip ok">追加</span><span class="p">packages/backend/src/main/java/…/NewService.java</span><span class="add">+42</span><span class="del">−0</span></li>
+        <li><span class="chip warn">変更</span><span class="p">packages/frontend/src/app/…/page.tsx</span><span class="add">+8</span><span class="del">−3</span></li>
+        <li><span class="chip risk">削除</span><span class="p">packages/backend/src/main/java/…/OldUtil.java</span><span class="add">+0</span><span class="del">−17</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="data">
+    <div class="sec-head"><span class="no">03 データ</span><h2>【差し替え】ER 図やシーケンス図などを置く</h2></div>
+    <div class="sec-body">
+      <figure>
+        <div class="diagram" aria-label="【差し替え】">
+<pre class="mermaid">
+erDiagram
+  employees ||--o{ attendance_records : "打刻する"
+  employees {
+    uuid id PK
+    varchar email
+  }
+  attendance_records {
+    uuid id PK
+    uuid employee_id FK
+    timestamp clock_in
+  }
+</pre>
+        </div>
+        <figcaption><span class="fig-n">図 3</span>【差し替え】根拠: <code>packages/backend/src/main/resources/db/migration/V1__….sql</code></figcaption>
+      </figure>
+      <!-- カード群: 図の要素ごとの役割説明（任意） -->
+      <div class="cards">
+        <div class="card"><h3>Controller</h3><p>【差し替え】役割を 1〜2 文で。</p><span class="path">packages/backend/src/main/java/…</span></div>
+        <div class="card"><h3>Service</h3><p>【差し替え】</p><span class="path">…</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="files">
+    <div class="sec-head"><span class="no">04 関連ファイル</span><h2>【差し替え】主要ファイルは 3 パッケージに 12 個</h2></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>パス</th><th>役割</th><th>状態</th></tr></thead>
+      <tbody>
+        <tr><td><code>packages/…</code></td><td>【差し替え】</td><td><span class="chip ok">確認済み</span></td></tr>
+        <tr><td><code>packages/…</code></td><td>【差し替え】</td><td><span class="chip warn">未確認</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="notes">
+    <div class="sec-head"><span class="no">05 補足</span><h2>未確認事項と注意点</h2></div>
+    <div class="sec-body">
+      <div class="callout">
+        <span class="chip warn">未確認</span>
+        <ul><li>【差し替え】コードで確認できなかったことを書く。無ければ「なし」</li></ul>
+      </div>
+      <div>
+        <h3>根拠にしたファイル</h3>
+        <ul class="sources"><li><code>packages/…</code></li></ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>Claude Code（visual-report スキル）で生成。図は mermaid（CDN）で描画。オフラインでは図のソースだけが表示される。</footer>
+</main>
+
+<script type="module">
+  // ---- ここから下は変更しない ----
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+  const root = document.documentElement;
+  const media = matchMedia('(prefers-color-scheme: dark)');
+  const MODES = ['auto', 'light', 'dark'], LABEL = { auto: '自動', light: 'ライト', dark: 'ダーク' };
+  let mode = 'auto';
+  try { mode = localStorage.getItem('visual-report-theme') || 'auto'; } catch {}
+  const isDark = () => mode === 'dark' || (mode === 'auto' && media.matches);
+  const applyTheme = () => { root.dataset.theme = isDark() ? 'dark' : 'light'; document.getElementById('theme-btn').textContent = 'テーマ: ' + LABEL[mode]; };
+
+  // 図のソースを保持（mermaid は要素を書き換えるため）。<br/> を残しつつ実体参照を戻す
+  const boxes = [...document.querySelectorAll('.diagram')].filter(b => b.querySelector('pre.mermaid')).map(box => {
+    const pre = box.querySelector('pre.mermaid');
+    const t = document.createElement('textarea');
+    t.innerHTML = pre.innerHTML.replace(/<br\s*\/?>/gi, '<br/>');
+    const vp = document.createElement('div'); vp.className = 'vp'; vp.tabIndex = 0;
+    pre.replaceWith(vp); vp.appendChild(pre);
+    return { box, vp, pre, src: t.value.trim() };
+  });
+
+  const tok = n => getComputedStyle(root).getPropertyValue(n).trim();
+  function config() {
+    const c = { bg: tok('--bg'), s: tok('--surface'), s2: tok('--surface-2'), b: tok('--border'), bb: tok('--border-bright'), t: tok('--text'), td: tok('--text-dim'),
+      a: tok('--accent'), as: tok('--accent-soft'), ok: tok('--ok'), oks: tok('--ok-soft'), w: tok('--warn'), ws: tok('--warn-soft'), r: tok('--risk'), rs: tok('--risk-soft') };
+    const font = tok('--font-body');
+    const shape = (cls, stroke, fill, dash) => `.node.${cls} rect,.node.${cls} polygon,.node.${cls} circle,.node.${cls} path,.node.${cls} .label-container{fill:${fill}!important;stroke:${stroke}!important;stroke-width:2px!important;${dash ? 'stroke-dasharray:6 4!important;' : ''}}`;
+    return {
+      startOnLoad: false, securityLevel: 'strict', theme: 'base', fontFamily: font,
+      flowchart: { htmlLabels: true, curve: 'basis', padding: 12, nodeSpacing: 40, rankSpacing: 50 },
+      sequence: { mirrorActors: false, showSequenceNumbers: true, actorMargin: 60 },
+      er: { layoutDirection: 'TB' },
+      themeVariables: {
+        darkMode: isDark(), background: c.bg, fontFamily: font, fontSize: '15px',
+        primaryColor: c.s, primaryTextColor: c.t, primaryBorderColor: c.bb, secondaryColor: c.s2, secondaryTextColor: c.t, secondaryBorderColor: c.bb,
+        tertiaryColor: c.s2, tertiaryTextColor: c.t, tertiaryBorderColor: c.b, lineColor: c.td, textColor: c.t, mainBkg: c.s, nodeBorder: c.bb, nodeTextColor: c.t,
+        clusterBkg: c.s2, clusterBorder: c.bb, titleColor: c.t, edgeLabelBackground: c.bg,
+        actorBkg: c.s, actorBorder: c.bb, actorTextColor: c.t, actorLineColor: c.bb, signalColor: c.td, signalTextColor: c.t,
+        labelBoxBkgColor: c.s2, labelBoxBorderColor: c.bb, labelTextColor: c.t, loopTextColor: c.t, noteBkgColor: c.ws, noteBorderColor: c.w, noteTextColor: c.t,
+        activationBkgColor: c.s2, activationBorderColor: c.bb, sequenceNumberColor: c.bg,
+        attributeBackgroundColorOdd: c.s, attributeBackgroundColorEven: c.s2,
+        stateBkg: c.s, stateLabelColor: c.t, compositeBackground: c.s2, compositeTitleBackground: c.s2, altBackground: c.s2, transitionColor: c.td, transitionLabelColor: c.t,
+      },
+      themeCSS: shape('key', c.a, c.as) + shape('added', c.ok, c.oks) + shape('changed', c.w, c.ws) + shape('removed', c.r, c.rs, true)
+        + `.edgeLabel,.edgeLabel p{background:${c.bg}!important;color:${c.t}!important;}`,
+    };
+  }
+
+  // ---- ズーム / パン ----
+  function panZoom(d) {
+    const svg = d.vp.querySelector('svg'); if (!svg) return;
+    const vb = svg.viewBox.baseVal; const w = vb.width || svg.getBBox().width, h = vb.height || svg.getBBox().height;
+    svg.removeAttribute('style'); svg.setAttribute('width', w); svg.setAttribute('height', h);
+    let s = 1, x = 0, y = 0;
+    const pct = d.box.querySelector('.pct');
+    const apply = () => { svg.style.transform = `translate(${x}px,${y}px) scale(${s})`; pct.textContent = Math.round(s * 100) + '%'; };
+    const fit = () => {
+      const full = document.fullscreenElement === d.box, pad = 24;
+      const W = d.vp.clientWidth;
+      if (full) { const H = d.vp.clientHeight; s = Math.min(2, (W - pad * 2) / w, (H - pad * 2) / h); }
+      else { s = Math.min(1, (W - pad * 2) / w); d.vp.style.height = Math.ceil(h * s + pad * 2 + 24) + 'px'; }
+      x = (W - w * s) / 2; y = full ? (d.vp.clientHeight - h * s) / 2 : pad + 24; apply();
+    };
+    const zoomAt = (f, px, py) => { const ns = Math.min(4, Math.max(.2, s * f)); x = px - (px - x) * ns / s; y = py - (py - y) * ns / s; s = ns; apply(); };
+    const center = () => [d.vp.clientWidth / 2, d.vp.clientHeight / 2];
+    d.fit = fit; d.zoomAt = zoomAt; d.center = center;
+    d.vp.onwheel = e => { if (!e.ctrlKey && !e.metaKey) return; e.preventDefault(); const r = d.vp.getBoundingClientRect(); zoomAt(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX - r.left, e.clientY - r.top); };
+    let drag = null;
+    d.vp.onpointerdown = e => { if (e.button !== 0) return; drag = { sx: e.clientX - x, sy: e.clientY - y }; d.vp.setPointerCapture(e.pointerId); d.vp.classList.add('is-drag'); };
+    d.vp.onpointermove = e => { if (!drag) return; x = e.clientX - drag.sx; y = e.clientY - drag.sy; apply(); };
+    d.vp.onpointerup = d.vp.onpointercancel = () => { drag = null; d.vp.classList.remove('is-drag'); };
+    d.vp.ondblclick = fit;
+    d.vp.onkeydown = e => { const [cx, cy] = center(); if (e.key === '+' || e.key === '=') zoomAt(1.25, cx, cy); else if (e.key === '-') zoomAt(.8, cx, cy); else if (e.key === '0') fit(); };
+    fit();
+  }
+  function toolbar(d) {
+    const bar = document.createElement('div'); bar.className = 'tools';
+    bar.innerHTML = '<span class="pct">100%</span><button type="button" data-z="out" title="縮小">−</button><button type="button" data-z="in" title="拡大">＋</button><button type="button" data-z="fit" title="全体を表示（ダブルクリックでも可）">全体</button><button type="button" data-z="full" title="全画面表示">全画面</button>';
+    bar.onclick = e => {
+      const z = e.target.closest('button')?.dataset.z; if (!z || !d.fit) return;
+      const [cx, cy] = d.center();
+      if (z === 'in') d.zoomAt(1.25, cx, cy); else if (z === 'out') d.zoomAt(.8, cx, cy); else if (z === 'fit') d.fit();
+      else if (z === 'full') document.fullscreenElement ? document.exitFullscreen() : d.box.requestFullscreen?.();
+    };
+    d.box.prepend(bar);
+  }
+
+  let errors = 0, seq = 0;
+  async function renderAll() {
+    applyTheme();
+    mermaid.initialize(config());
+    errors = 0;
+    for (const d of boxes) {
+      try {
+        const { svg } = await mermaid.render('mmd-' + (++seq), d.src);
+        d.vp.innerHTML = svg; panZoom(d);
+      } catch (err) {
+        errors++; d.fit = null; console.error('mermaid', err);
+        d.vp.innerHTML = '';
+        const msg = document.createElement('div'); msg.className = 'err'; msg.textContent = '図を描画できませんでした（mermaid の構文エラー）: ' + (err?.message || err);
+        const pre = document.createElement('pre'); pre.className = 'mermaid'; pre.textContent = d.src;
+        d.vp.append(msg, pre); d.vp.style.height = '';
+        document.querySelectorAll('[id^="dmmd-"]').forEach(n => n.remove());
+      }
+    }
+    root.dataset.mermaid = errors ? 'error:' + errors : 'ok';
+  }
+
+  boxes.forEach(toolbar);
+  document.getElementById('theme-btn').onclick = () => {
+    mode = MODES[(MODES.indexOf(mode) + 1) % MODES.length];
+    try { localStorage.setItem('visual-report-theme', mode); } catch {}
+    renderAll();
+  };
+  media.addEventListener('change', () => { if (mode === 'auto') renderAll(); });
+  document.addEventListener('fullscreenchange', () => boxes.forEach(d => d.fit && d.fit()));
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => boxes.forEach(d => d.fit && d.fit()), 150); });
+  await document.fonts.ready;
+  await renderAll();
+
+  // ---- 目次のスクロール連動 ----
+  const links = new Map([...document.querySelectorAll('.toc a')].map(a => [a.getAttribute('href').slice(1), a]));
+  const spy = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(a => a.classList.remove('is-active')); links.get(e.target.id)?.classList.add('is-active');
+  }), { rootMargin: '-10% 0px -80% 0px' });
+  document.querySelectorAll('main section[id]').forEach(s => spy.observe(s));
+</script>
+</body>
+</html>

@@ -1,37 +1,58 @@
 ---
 name: visual-report
-description: コードベースや変更内容を mermaid 図・表・サマリーカード入りの単一 HTML レポートにまとめる。全体構成の可視化、Issue 対応の変更内容の説明、機能の処理フローの図解を頼まれたときに使う。
+description: コードベースや変更内容を、mermaid 図（ズーム・全画面対応）・数値ストリップ・表で説明する単一 HTML レポートにまとめる。全体構成の図解、Issue 対応の変更内容レポート、機能の処理フローの図解を頼まれたときに使う。
 ---
 
 # ビジュアルレポート（HTML）
 
-コードを読んで、**図と表で説明する単一 HTML** を `reports/` に書き出す。
-ブラウザで開くだけで見られる（ビルド不要・1 ファイル完結）。
+コードを読んで、**開いて 10 秒で全体がつかめる単一 HTML** を `reports/` に書き出す。
+図が主役で、文章は図の説明に徹する。ブラウザで開くだけで見られる（ビルド不要・1 ファイル完結）。
+
+同じフォルダのファイル:
+
+| ファイル | 中身 | いつ読む |
+|---------|------|---------|
+| `template.html` | スタイル・図の描画（ライト / ダーク、ズーム / パン / 全画面）・部品の見本 | HTML を書く前に必ず |
+| `mermaid.md` | 図の選び方、強調クラス、構文エラーを防ぐ注意、ひな形 | 図を書く前に必ず |
 
 ## いつ使う
 
-| 用途 | 例 | 主な図 |
-|------|----|--------|
-| 全体構成の可視化 | 「このアプリの構成を図で説明して」 | アーキテクチャ図（flowchart）、ER 図、パッケージ構成表 |
-| 変更内容のレポート | 「Issue #3 の対応内容をレポートにして」 | 変更前後のシーケンス図、変更ファイル表 |
-| 機能の処理フロー | 「打刻の処理の流れを図にして」 | シーケンス図、状態遷移図、フローチャート |
+| 用途 | 依頼の例 | 主な図 |
+|------|---------|--------|
+| 全体構成 | 「このアプリの構成を図解して」 | システム構成（flowchart + subgraph）、レイヤー、ER 図 |
+| 変更内容 | 「Issue 0003 の対応内容をレポートにして」 | 変更前 / 変更後の図、変更ファイルマップ、変更後のシーケンス図 |
+| 処理フロー | 「打刻の処理の流れを図にして」 | シーケンス図、状態遷移図、分岐のフローチャート |
 
 ## 手順
 
-1. **対象を決める**: 依頼が曖昧なら、対象（全体 / 機能名 / 変更）を 1 回だけ確認する
-2. **コードを読む**: 図に出すものはすべてコードで確認する
-   - 全体構成: `packages/*/`、`docs/design/`、`build.gradle.kts`、`package.json`
-   - 変更内容: `git diff` / `git log -p`（未コミットなら `git diff HEAD`）、対応する Issue ファイル
-   - 処理フロー: 画面（`packages/frontend/src/app/`）→ API クライアント → Controller → Service → Repository → テーブル
-3. **HTML を書く**: 下の構成とテンプレートに沿って 1 ファイルで書き出す
-4. **報告する**: 出力パス・開き方・図の一覧を伝える
+1. **対象を決める**: 依頼が曖昧なら、対象（全体 / 機能名 / Issue 番号）を 1 回だけ確認する
+2. **根拠を集める**: 下の「読む場所」に沿ってコードを読み、図に出す事実とそのファイルパスをメモする
+3. **ページを設計する**: 書き始める前に、次の 3 つを決める
+   - 結論の一文（h1 になる）
+   - 数値ストリップに出す数字 3〜5 個（コードで数えられるものだけ）
+   - 図の一覧（図ごとに「言いたいこと」を一文で）
+4. **HTML を書く**: `template.html` をコピーし、`<body>` の中身を差し替える（下の「テンプレートの使い方」）
+5. **セルフチェック**: 下の「品質チェック」を確認する。`playwright-cli` が使えるなら開いて描画エラーがないことを確かめる
+6. **報告する**: 「完了報告」の形式で伝える
+
+### 読む場所
+
+| 用途 | 読むもの |
+|------|---------|
+| 全体構成 | ルートと各 `packages/*/` の `package.json`・`build.gradle.kts`、`packages/backend/src/main/java/**`（Controller / Service / Repository / Entity）、`src/main/resources/application*.yaml`、`db/migration/V*.sql`、`packages/frontend/src/app/**/page.tsx` と `src/features/**`、`packages/infra/lib/*.ts`、`.github/workflows/*.yml`、`docs/design/` |
+| 変更内容 | 対象の Issue ファイル `issues/NNNN-*.md`（「調査結果」「変更内容」「受け入れ条件」）、機能追加なら `docs/feature-N/qa.md`、差分 `git log --oneline` / `git diff --stat` / `git diff --numstat` / `git diff`（未コミットなら `git diff HEAD`、コミット済みなら Issue 番号 `(#N)` を含むコミットを `git log --grep` で探す） |
+| 処理フロー | 画面 `src/app/**/page.tsx` → コンポーネント・hook（`src/features/**`）→ API クライアント（`src/lib/api-client.ts`）→ Controller → Service → Repository → テーブル（`V*.sql`） |
+
+Issue 番号の扱い（`#3` = `issues/0003-*.md`）は `.claude/rules/common/issue-workflow.md` に従う。該当ファイルが無い・複数あるときは推測せず確認する。
 
 ## 事実確認（必須）
 
-- **コードに存在しないコンポーネント・テーブル・API を図に描かない**。推測で補わない
+- **コードに存在しないコンポーネント・テーブル・API・矢印を描かない**。推測で補わない
 - クラス名・エンドポイント・テーブル名・カラム名はコードの表記どおりに書く
-- 図の各要素には根拠のファイルパスを表やキャプションで添える
-- 確認できなかった点は「未確認」と明記する
+- 数字（API 数・テーブル数・変更行数など）は実際に数えた値だけを出す。数え方（対象ファイルと、何を含め何を除いたか）を `.d` やキャプションに添える
+- 各図のキャプションと表に根拠のファイルパスを書く。ページ末尾の「根拠にしたファイル」に一覧を出す
+- 確認できなかった点は図に描かず、「未確認事項」に書く。設計書（`docs/design/`）とコードが食い違えばコードを正とし、食い違いを未確認事項に書く
+- 変更内容レポートでは、Issue に書かれた「変更内容」と実際の `git diff` が一致するかを確かめ、ずれがあれば明記する
 
 ## 出力先
 
@@ -39,134 +60,112 @@ description: コードベースや変更内容を mermaid 図・表・サマリ�
 reports/<YYYYMMDD-HHMM>-<slug>.html
 ```
 
-- 例: `reports/20261005-1430-architecture.html`、`reports/20261005-1500-issue-3-change.html`
+- 例: `reports/20261009-1030-architecture.html`、`reports/20261009-1100-issue-0003-change.html`
 - `<slug>` は英小文字のケバブケース（Windows でも扱えるよう ASCII のみ）
-- 日時は Git Bash で `date +%Y%m%d-%H%M`
-- `reports/` は `.gitignore` 済み（生成物のためコミットしない）。残したいときは Issue ファイル等に要点を書く
+- 日時は Git Bash なら `date +%Y%m%d-%H%M`、PowerShell なら `Get-Date -Format yyyyMMdd-HHmm`
+- `reports/` は `.gitignore` 済み（生成物はコミットしない）。残したい要点は Issue ファイルなどに書く
 
-## レポート構成
+## ページ構成
 
-1. **ヘッダ**: タイトル、対象（全体 / 機能 / 変更）、生成日時
-2. **サマリーカード**: 3〜4 枚（例: 変更ファイル数、関係するテーブル数、API 数、要点 1 行）
-3. **図**: 用途に合うものを 2〜4 個。各図に見出しと 1〜2 文の説明を付ける
-4. **表**: 関連ファイル（パス・役割）、API（メソッド・パス・説明）、テーブル（名前・主なカラム）など
-5. **補足**: 注意点・未確認事項
+共通の骨組み（`template.html` の順番）:
 
-文章はすべて日本語。1 図に詰め込みすぎない（ノード 15 個程度まで。超えるなら分割）。
+1. **ヘッダ**: キッカー（レポート種別）→ **結論を述べる h1** → リード 1〜2 文 → メタ情報（対象・ブランチ / コミット・生成日時）
+2. **数値ストリップ**: 3〜5 個。一番大事な 1 個だけ `is-key`。内訳があれば `.meter` で比率を添える
+3. **図 1（主役）**: ヘッダの直後。最初の画面に「答え」が見えるようにする
+4. 用途別のセクション（下表）
+5. **補足・未確認事項** → **根拠にしたファイル**（折りたたまず見える形で）
 
-## mermaid の使い分け
+| 用途 | セクションの並び |
+|------|-----------------|
+| 全体構成 | システム構成図 → バックエンドのレイヤーと主要クラス（図 + カード）→ データ（ER 図）→ API・画面の一覧表 → 未確認事項 |
+| 変更内容 | 結論（何が直ったか / 何ができるようになったか）→ 変更前 / 変更後の図（`.pair`）→ 変更ファイルマップ（`.files`、`+N −M`）→ 変更後の処理（シーケンス図）→ 受け入れ条件との対応表（チップで ●対応済み / ▲一部 / ■未対応）→ テスト・検証 → 未確認事項・残リスク |
+| 処理フロー | 1 ユースケースのシーケンス図 → 分岐・エラー時のフロー → 状態遷移（あれば）→ 関係するクラス・API・テーブルの表 → 未確認事項 |
 
-| 図 | 記法 | 向いている内容 |
-|----|------|---------------|
-| アーキテクチャ | `flowchart LR` | Frontend → Backend → DB、パッケージ間の依存 |
-| シーケンス | `sequenceDiagram` | 画面操作から DB までの呼び出し順 |
-| ER | `erDiagram` | テーブルと関連（Flyway の `V*.sql` を根拠にする） |
-| 状態遷移 | `stateDiagram-v2` | 申請の状態（申請中 → 承認 / 却下）など |
-| フロー | `flowchart TD` | 分岐のある処理・バリデーション |
+- 4 セクション以上なら上部の目次（`.toc`）を残し、各 `section` の `id` と合わせる。3 つ以下なら目次を消す
+- 空になるセクションは作らない。同じ形のブロックを 3 つ以上続けない（図 → 数値 → カード → 表のように変化をつける）
 
-構文エラーを避けるコツ:
+## 見た目の原則
 
-- ノードのラベルに `()` `[]` `:` `"` を含むときは `A["ラベル(補足)"]` のように `"` で囲む
-- `erDiagram` の属性は `型 名前` の順（例: `uuid id PK`）。型に `()` を使わない
-- `sequenceDiagram` の参加者名は英数字の ID にし、表示名は `participant FE as フロントエンド` で付ける
+- **見出しは結論で書く**: 「キャッシュ」ではなく「読み込みの 9 割は DB に届かない」。h2 も同じ
+- **1 図 1 主張**: `<figure>` + `<figcaption>`（`図 N` + 言いたいこと一文 + 根拠パス）。図の説明を本文に書き直さない
+- **静かな地に強調は 1 色**: 大半はグレー系。アクセント色（`key`）は「今見てほしい 1 点」だけ。状態色（緑 / 黄 / 赤）は状態の意味にだけ使う
+- **色だけに頼らない**: チップは「●▲■◆ + 言葉」、削除は点線。凡例（`.legend`）を図の下に置く
+- **数字には根拠と絵を添える**: 数値ストリップの値には数えた対象を書き、内訳は `.meter` で見せる
+- **文章は短く**: 1 段落 1〜3 文、1 文 60 字程度まで。箇条書きと表を優先する
+- **部品の形をそろえる**: 角丸は `--r-1`（チップ・ボタン）と `--r-2`（枠・表・カード）だけ。余白・文字サイズはテンプレートの変数から選ぶ
 
-## HTML テンプレート
+### UI ルール（必須）
 
-この骨組みを元に書く（スタイルは調整してよい）。
+- **角丸と一辺だけのボーダーを同じ要素に組み合わせない**
+  - 一辺だけの線（セクション見出しの上線、上部ナビの下線、表の行罫線）を使う要素は角を丸めない
+  - 角丸の要素（数値ストリップ、図の枠、カード、表の外枠、補足）は全周の枠線・背景・余白で区切る
+  - 補足や注意書きに「色付きの左線」を付けない。チップで種類を示す
 
-```html
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>タイトル</title>
-<style>
-  :root {
-    color-scheme: light dark;
-    --bg: #ffffff; --fg: #1f2328; --muted: #59636e;
-    --card: #f6f8fa; --line: #d1d9e0; --accent: #0969da;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1;
-            --card: #161b22; --line: #3d444d; --accent: #4493f8; }
-  }
-  body { margin: 0; background: var(--bg); color: var(--fg);
-         font-family: "Segoe UI", "Yu Gothic UI", "Meiryo", sans-serif; line-height: 1.7; }
-  main { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
-  h1 { margin: 0 0 4px; }
-  .meta { color: var(--muted); font-size: 14px; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 24px 0; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
-  .card .value { font-size: 28px; font-weight: 600; }
-  .card .label { color: var(--muted); font-size: 13px; }
-  section { margin: 32px 0; }
-  h2 { padding-bottom: 6px; border-bottom: 1px solid var(--line); }
-  .diagram { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 16px; overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
-  th { background: var(--card); }
-  code { font-family: Consolas, monospace; font-size: 13px; }
-  .note { border-left: 4px solid var(--accent); padding: 8px 12px; background: var(--card); }
-</style>
-</head>
-<body>
-<main>
-  <h1>タイトル</h1>
-  <div class="meta">対象: … / 生成: YYYY-MM-DD HH:MM</div>
+## テンプレートの使い方
 
-  <div class="cards">
-    <div class="card"><div class="value">12</div><div class="label">変更ファイル</div></div>
-  </div>
+- `<style>` と末尾の `<script type="module">` は**そのまま使う**。色はトークン（`--bg` `--accent` など）を通して使い、新しい色コードを書かない
+- `<body>` の見本は用途に合わせて残す・消す・並べ替える。`【差し替え】` は 1 つも残さない
+- `<title>` は h1 と同じ結論にする
+- 図は `<div class="diagram" aria-label="図の内容"><pre class="mermaid">…</pre></div>` の形で置く。ツールバー（％表示・−・＋・全体・全画面）はスクリプトが付ける
+- 図の操作: ドラッグで移動、Ctrl + ホイールで拡大縮小、ダブルクリックで全体表示、「全画面」でプロジェクタ向けに大きく表示
+- 右上の「テーマ」ボタンで 自動 / ライト / ダーク を切り替えられる（図も描き直される）
 
-  <section>
-    <h2>全体構成</h2>
-    <p>説明 1〜2 文。</p>
-    <div class="diagram"><pre class="mermaid">
-flowchart LR
-  FE["Frontend (Next.js)"] --> BE["Backend (Spring Boot)"] --> DB[(PostgreSQL / H2)]
-    </pre></div>
-  </section>
+## mermaid の要点
 
-  <section>
-    <h2>関連ファイル</h2>
-    <table>
-      <tr><th>パス</th><th>役割</th></tr>
-      <tr><td><code>packages/...</code></td><td>…</td></tr>
-    </table>
-  </section>
+詳細とひな形は `mermaid.md`。最低限ここだけは守る:
 
-  <section>
-    <h2>補足・未確認事項</h2>
-    <p class="note">…</p>
-  </section>
-</main>
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  mermaid.initialize({ startOnLoad: true, theme: dark ? 'dark' : 'default', securityLevel: 'strict' });
-</script>
-</body>
-</html>
+- ラベルは必ず `"` で囲む（`A["打刻(出勤)"]`、`-->|"GET /api/x"|`）。改行は `<br/>`
+- ノード ID・参加者 ID・テーブル名は英数字だけ。表示名は `as` や `["…"]` で付ける
+- `erDiagram` の型に `()` を書かない（`varchar(255)` → `varchar`）。関連ラベルは `"` で囲む
+- 色を直接書かない。強調は `class X key` / `added` / `changed` / `removed` だけ
+- ノードは 12 個、横一列は 6 個まで。超えたら図を分けるか `flowchart TB` + `subgraph` の `direction LR`（外との矢印は subgraph ID に向ける）
+- HTML の中なので `&` は `&amp;`。`<` `>` はラベルに書かない
+
+## やってはいけないこと
+
+- コードに無い要素や「よくある構成」を想像で描く
+- 図の中身を本文で繰り返す / 図の無い長文セクション
+- 1 つの図に全部載せる（ノード 20 個の巨大図）。全体図と詳細図に分ける
+- 装飾目的の色・グラデーション・絵文字・影の多用。アクセント色の多用
+- 角丸 + 一辺ボーダーの組み合わせ（上の UI ルール）
+- mermaid 以外の外部ライブラリや Web フォントの読み込み（フォントは Windows 標準の Segoe UI / Yu Gothic UI / Meiryo を使う）
+- `reports/` 以外への出力、生成物のコミット
+
+## 品質チェック
+
+```
+□ reports/<日時>-<slug>.html の 1 ファイル。【差し替え】が残っていない
+□ 最初の画面に「結論の h1 + 数値 + 主役の図」が入っている
+□ 見出し（h1 / h2）が結論になっている。各図に「図 N + 主張 + 根拠パス」のキャプション
+□ 図・表・数字のすべてがコードで確認済み。未確認は未確認事項に書いた
+□ 強調（key）は 1 図に 1〜2 個。変更内容レポートは追加 / 変更 / 削除の凡例がある
+□ mermaid の注意（引用符・ID・型・& のエスケープ）を見直した
+□ ライト / ダークどちらでも読める（テーマボタンで切り替えて確認できる）
+□ 角丸と一辺ボーダーを同じ要素に使っていない
 ```
 
-### スタイルの決まりごと
+`playwright-cli` が使える場合の描画確認（任意。ブラウザは閉じるまでが 1 セット）:
 
-- ライト / ダーク両対応にする（CSS 変数 + `prefers-color-scheme`）
-- **角丸と一辺だけのボーダーを同じ要素に組み合わせない**
-  - 一辺だけのボーダー（例: `.note` の左線、`h2` の下線）を使う要素は角を丸めない
-  - 角丸を使う要素（`.card`、`.diagram`）は全周の枠線や背景色で区切る
-- 外部から読み込むのは mermaid（CDN）だけにする。インターネットに出られない環境では図が表示されない旨を補足に書く
+```bash
+# Git Bash。file:// を開くには環境変数で許可する（既定ではブロックされる）
+PLAYWRIGHT_MCP_ALLOW_UNRESTRICTED_FILE_ACCESS=true playwright-cli open "file:///$(pwd -W 2>/dev/null || pwd)/reports/<ファイル名>.html"
+playwright-cli eval "() => document.documentElement.dataset.mermaid"   # "ok" なら全図描画成功。"error:N" なら N 個が構文エラー
+playwright-cli close
+```
+
+- 結果は出力の `### Result` の次の行に出る（先頭に更新のお知らせが出ることがある）。`undefined` なら描画中なので、数秒おいて `eval` をやり直す
+- 構文エラーの図はページ上に赤枠で表示される。`mermaid.md` の注意を見直して直す
 
 ## 開き方（Windows）
 
-- **VS Code**: Explorer で HTML を右クリック →「Reveal in File Explorer」→ ダブルクリック（Edge で開く）
-- **PowerShell**: `start reports\20261005-1430-architecture.html`
-- **Git Bash**: `explorer.exe "$(cygpath -w reports/20261005-1430-architecture.html)"`（成功しても終了コード 1 が返るが問題ない）
+- **PowerShell**: `start reports\20261009-1030-architecture.html`
+- **Git Bash**: `explorer.exe "$(cygpath -w reports/20261009-1030-architecture.html)"`（成功しても終了コード 1 が返るが問題ない）
+- **VS Code**: Explorer で HTML を右クリック →「Reveal in File Explorer」→ ダブルクリック（Edge / Chrome で開く）
+- 図は mermaid を CDN から読み込む。インターネットに出られない環境では図の代わりにソースが表示される
 
 ## 完了報告
 
-- 出力パス（リポジトリルートからの相対パス）
-- 上記の開き方
-- 含めた図の一覧（種類と見出し）
-- 未確認事項があればその内容
+- 出力パス（リポジトリルートからの相対パス）と開き方
+- 結論の一文（h1）
+- 含めた図の一覧（`図 N: 種類 — 主張`）
+- 未確認事項（あれば）

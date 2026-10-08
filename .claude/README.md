@@ -24,7 +24,7 @@
     ├── tdd-implementation/     # Plan → 承認 → TDD 実装
     ├── multi-agent-review/     # 並列 subagent レビュー
     ├── verify/                 # 検証コマンド
-    ├── visual-report/          # mermaid 図入り HTML レポート
+    ├── visual-report/          # mermaid 図入り HTML レポート（SKILL.md / template.html / mermaid.md）
     └── screen-check/           # playwright-cli で画面確認 + スクショ証跡
 ```
 
@@ -63,7 +63,7 @@ Issue はリポジトリ直下の `issues/` に 1 件 1 ファイルの Markdown
 
 | スキル | 用途 | 出力 |
 |--------|------|------|
-| `visual-report` | 全体構成・変更内容・処理フローを図解した HTML レポート | `reports/<日時>-<slug>.html`（コミットしない） |
+| `visual-report` | 全体構成・変更内容・処理フローを図解した HTML レポート（ズーム・全画面・ライト/ダーク切替つき） | `reports/<日時>-<slug>.html`（コミットしない） |
 | `screen-check` | 起動中のアプリをブラウザ操作して画面を確認 | `issues/assets/` のスクショ（Issue なしなら `reports/screenshots/`） |
 
 ## Agents（subagent）
