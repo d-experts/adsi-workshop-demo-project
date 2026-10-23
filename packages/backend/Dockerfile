@@ -15,8 +15,10 @@ WORKDIR /app
 #   - fonts-dejavu-core … AWT 初期化用の物理フォント（No physical fonts found を回避）
 # ※ レポート本文の日本語は jar 内の Font Extension（Noto Sans JP）を PDF 埋め込みするため、
 #    日本語フォントを OS に入れる必要はない。ここで入れるのは AWT 初期化を通すためだけ。
+# ca-certificates: eMudhra 中間 CA 鍵漏洩への対応。タグ固定のベースイメージは古い信頼ストアのままなので明示的に上げる。
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends fontconfig fonts-dejavu-core \
+	&& apt-get install -y --no-install-recommends --only-upgrade ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& fc-cache -f
 COPY --from=build /app/build/libs/*.jar app.jar
